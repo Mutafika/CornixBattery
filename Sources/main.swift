@@ -5,23 +5,6 @@ import CoreBluetooth
 let batteryServiceUUID = CBUUID(string: "180F")
 let batteryLevelCharUUID = CBUUID(string: "2A19")
 
-let logFile = FileManager.default.homeDirectoryForCurrentUser
-    .appendingPathComponent("Desktop/mutafika/CornixBattery/debug.log")
-
-func debugLog(_ msg: String) {
-    let line = "\(Date()): \(msg)\n"
-    if let data = line.data(using: .utf8) {
-        if FileManager.default.fileExists(atPath: logFile.path) {
-            if let handle = try? FileHandle(forWritingTo: logFile) {
-                handle.seekToEndOfFile()
-                handle.write(data)
-                handle.closeFile()
-            }
-        } else {
-            try? data.write(to: logFile)
-        }
-    }
-}
 
 // MARK: - Battery Manager
 class BatteryManager: NSObject, CBCentralManagerDelegate, CBPeripheralDelegate {
@@ -81,8 +64,7 @@ class BatteryManager: NSObject, CBCentralManagerDelegate, CBPeripheralDelegate {
     }
 
     func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
-        // Discover ALL services to see what's available
-        peripheral.discoverServices(nil)
+        peripheral.discoverServices([batteryServiceUUID])
     }
 
     func centralManager(_ central: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, error: Error?) {
@@ -98,10 +80,7 @@ class BatteryManager: NSObject, CBCentralManagerDelegate, CBPeripheralDelegate {
     func peripheral(_ peripheral: CBPeripheral, didDiscoverServices error: Error?) {
         guard let services = peripheral.services else { return }
         discoveredBatteryServices = services.filter { $0.uuid == batteryServiceUUID }
-        debugLog("Found \(discoveredBatteryServices.count) battery service(s), total services: \(services.count)")
-        for (i, service) in services.enumerated() {
-            debugLog("Service[\(i)]: \(service.uuid)")
-        }
+
         for service in discoveredBatteryServices {
             peripheral.discoverCharacteristics([batteryLevelCharUUID], for: service)
         }
