@@ -1,0 +1,4 @@
+.build/
+CornixBattery.app/
+debug.log
+.DS_Store
