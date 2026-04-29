@@ -39,3 +39,7 @@ CONFIG_ZMK_SPLIT_BLE_CENTRAL_BATTERY_LEVEL_PROXY=y
 
 - 初回起動時に Bluetooth アクセスの許可が必要です
 - Cornix LP が macOS に接続済みの状態で使用してください
+
+## ライセンス
+
+MIT License — 詳細は [LICENSE](LICENSE) を参照
